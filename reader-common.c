@@ -473,6 +473,28 @@ int32_t cardreader_do_ecm(struct s_reader *reader, ECM_REQUEST *er, struct s_ecm
 		{
 			rc = reader->csystem->do_ecm(reader, er, ea);
 			rdr_log_dbg(reader, D_READER, "%s: after csystem->do_ecm rc=%d", __func__, rc);
+      if(rc){
+        reader->err4reset=0;
+        reader->err4restart=0;
+      }else{
+        reader->err4reset++;
+        reader->err4restart++;
+        if(reader->resetmax && (reader->err4reset>=reader->resetmax)){
+          cs_log("Got %d errors in reader %s - resetting reader ...",
+              reader->err4reset,
+              reader->label);
+          reader->card_status = CARD_NEED_INIT;
+          reader->err4reset=0;
+          cardreader_reset(reader->client);
+        }
+        if (reader->restartmax && (reader->err4restart>=reader->restartmax)) {
+          cs_log("Got %d errors in reader %s - restarting oscam ...",
+              reader->err4restart,
+              reader->label);
+          reader->err4restart=0;
+          cs_restart_oscam();
+        }
+      }
 		}
 		else
 			{ rc = 0; }

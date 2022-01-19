@@ -36,7 +36,7 @@
 #include <termios.h>
 #include <inttypes.h>
 #include <sys/utsname.h>
-#include <sys/sysmacros.h>
+//#include <sys/sysmacros.h>
 
 /*
  * The following hack is taken from Linux: include/linux/kconfig.h
@@ -1865,6 +1865,12 @@ struct s_reader										// contains device info, reader info and card info
 	uint8_t			cnxlastecm;						// == 0 - last ecm has not been paired ecm, > 0 last ecm has been paired ecm
 	LLIST			*emmstat;						// emm stats
 	CS_MUTEX_LOCK	emmstat_lock;
+
+  uint16_t err4reset;
+  uint16_t resetmax;
+  uint16_t err4restart;
+  uint16_t restartmax;
+
 	struct s_reader	*next;
 };
 
